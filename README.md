@@ -107,8 +107,27 @@ FastAPI resolves authentication and database dependencies, validates input, and 
 
 Tests cover CRUD, persistence, authentication, user isolation, time conflicts and boundaries, keyword search, ICS export, and weekly batches, including rejection without partial saves. Tests use a temporary database and do not modify `timetable.db`.
 
+## Run with Docker
+
+Build the image from the project directory:
+
+```powershell
+docker build -t simple-timetable-api .
+```
+
+Start the API on port 8000 and keep the SQLite database on the host:
+
+```powershell
+docker run --name simple-timetable-api-container `
+  -p 8000:8000 `
+  -v "${PWD}\timetable.db:/app/timetable.db" `
+  simple-timetable-api
+```
+
+Open <http://127.0.0.1:8000/docs> for the Swagger UI. Stop the container with `docker stop simple-timetable-api-container` and start it again with `docker start simple-timetable-api-container`.
+
 ## Current limitations
 
 - Overlap checks query before writing; concurrent requests can still race.
 - ICS UIDs use database integer ids, which may collide across databases or when ids are reused. Repeated imports may create duplicates depending on the calendar application.
-- Time-range filtering, pagination, general recurrence rules, MCP, and Docker packaging are not implemented yet.
+- Time-range filtering, pagination, general recurrence rules, and MCP are not implemented yet.
